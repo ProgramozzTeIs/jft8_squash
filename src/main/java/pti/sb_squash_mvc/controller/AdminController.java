@@ -44,6 +44,8 @@ public class AdminController {
         model.addAttribute("gamePageDTO", gamePageDTO);
         return "games.html";
     }
+    
+    
 
 
 }
