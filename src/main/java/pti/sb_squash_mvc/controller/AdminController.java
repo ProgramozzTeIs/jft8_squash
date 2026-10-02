@@ -14,13 +14,7 @@ public class AdminController {
     @Autowired
 	public AdminController(AdminService adminService) {
 		super();
-		// Test Comment for Merge Conflict
-		System.out.println("hello world");
 		this.adminService = adminService;
-		/**
-		 * TEST
-		 */
-		System.out.println("Hello Admin Controller!!");
 	}
 
     
