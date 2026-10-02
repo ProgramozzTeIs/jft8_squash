@@ -15,7 +15,7 @@ public class AdminController {
 	public AdminController(AdminService adminService) {
 		super();
 		// Test Comment for Merge Conflict
-		System.out.println("hello world");
+		System.out.println("abcd");
 		this.adminService = adminService;
 		/**
 		 * TEST
