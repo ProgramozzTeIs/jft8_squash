@@ -13,8 +13,6 @@ public class AdminController {
     
     @Autowired
 	public AdminController(AdminService adminService) {
-		super();
-		// Test Comment for Merge Conflict
 		this.adminService = adminService;
 	}
 
