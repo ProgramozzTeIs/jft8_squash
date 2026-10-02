@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Games</title>
+</head>
+<body>
+    <h2>Games</h2>
+    <table>
+        <tr>
+            <th>P1</th>
+            <th>P2</th>
+            <th>P1 Score</th>
+            <th>P2 Score</th>
+            <th>Place</th>
+            <th>Address</th>
+            <th>Rental Fee</th>
+            <th>Date</th>
+        </tr>
+        <tr th:each="game : ${gamePageDTO.getGames()}">
+            <td th:text="${game.getUser1().getName()}"></td>
+            <td th:text="${game.getUser2().getName()}"></td>
+            <td th:text="${game.getGameResult().getUser1Score()}"></td>
+            <td th:text="${game.getGameResult().getUser2Score()}"></td>
+            <td th:text="${game.getPlace().getName()}"></td>
+            <td th:text="${game.getPlace().getAddress()}"></td>
+            <td th:text="${game.getPlace().getRentalFee()}"></td>
+            <td th:text="${game.getDate()}"></td>
+        </tr>
+    </table>
+
+    <h2>Search for player</h2>
+    <form action="/user/search/player" method="get">
+        <input type="hidden" name="requestUserId" th:value="${gamePageDTO.getUserId()}">
+        <label>Player:
+            <select name="searchedPlayerId">
+                <option th:each="user : ${gamePageDTO.getAllUser()}" th:text="${user.getName()}" th:value="${user.getId()}"></option>
+            </select>
+        </label>
+        <br>
+        <br>
+        <input type="submit" value="Search">
+    </form>
+</body>
+</html>

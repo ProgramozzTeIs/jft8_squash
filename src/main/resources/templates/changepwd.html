@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Change Password</title>
+</head>
+<body>
+    <h2>Welcome <span th:text="${userDTO.getName()}"></span>, please change your password.</h2>
+
+    <form action="/user/changepwd" method="post">
+        <input type="hidden" name="uId" th:value="${userDTO.getId()}">
+        <label>New Password:
+            <input type="password" name="newPwd" />
+        </label>
+        <br>
+        <br>
+        <input type="submit" value="Change">
+    </form>
+</body>
+</html>

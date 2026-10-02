@@ -3,25 +3,83 @@ package pti.sb_squash_mvc.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import pti.sb_squash_mvc.dto.*;
+import pti.sb_squash_mvc.model.FullGame;
+import pti.sb_squash_mvc.model.Place;
+import pti.sb_squash_mvc.model.User;
 import pti.sb_squash_mvc.repository.GameRepository;
 import pti.sb_squash_mvc.repository.PlaceRepository;
 import pti.sb_squash_mvc.repository.UserRepository;
 
+import java.util.List;
+import java.util.stream.StreamSupport;
+
 @Service
 public class UserService {
-	
-	private GameRepository gameRepo;
-	private PlaceRepository placeRepo;
-	private UserRepository userRepo;
+	private final GameRepository gameRepo;
+	private final PlaceRepository placeRepo;
+	private final UserRepository userRepo;
 	
 	@Autowired
 	public UserService(GameRepository gameRepo, PlaceRepository placeRepo, UserRepository userRepo) {
-		super();
 		this.gameRepo = gameRepo;
 		this.placeRepo = placeRepo;
 		this.userRepo = userRepo;
 	}
-	
-	
 
+	public GamePageDTO getGamePageDTO(Integer userId, Integer searchedPlayerId, Integer searchedPlaceId) {
+		return new GamePageDTO(
+				userId,
+				getGameDTOList(searchedPlayerId, searchedPlaceId),
+				StreamSupport.stream(userRepo.findAll().spliterator(), false).map(this::convertToDTO).toList(),
+				StreamSupport.stream(placeRepo.findAll().spliterator(), false).map(this::convertToDTO).toList()
+		);
+	}
+
+	private List<GameDTO> getGameDTOList(Integer searchedPlayerId, Integer searchedPlaceId) {
+		if (searchedPlayerId != null) {
+			return gameRepo.findGamesByPlayer(searchedPlayerId).stream().map(this::convertToDTO).toList();
+		}
+
+		if (searchedPlaceId != null) {
+			//TODO: Kalman, filter by placeId
+		}
+
+		return gameRepo.findAllGames().stream().map(this::convertToDTO).toList();
+	}
+
+	public void changePassword(Integer userId, String password) {
+		userRepo.findById(userId).ifPresent(user -> {
+			user.setPassword(password);
+			user.setLoggedIn(true);
+			user.setFirstLoginDone(true);
+			userRepo.save(user);
+		});
+	}
+	
+	private GameDTO convertToDTO(FullGame game) {
+		return new GameDTO(
+				new UserDTO(game.getUser1Id(), game.getUser1Name()),
+				new UserDTO(game.getUser2Id(), game.getUser2Name()),
+				new GameResultDTO(game.getUser1Score(), game.getUser2Score()),
+				new PlaceDTO(game.getPlaceId(), game.getPlaceName(), game.getAddress(), game.getRentFee()),
+				game.getGameDate()
+		);
+	}
+
+	private UserDTO convertToDTO(User user) {
+		return new UserDTO(
+				user.getId(),
+				user.getName()
+		);
+	}
+
+	private PlaceDTO convertToDTO(Place place) {
+		return new PlaceDTO(
+				place.getId(),
+				place.getName(),
+				place.getAddress(),
+				place.getRentFee()
+		);
+	}
 }
