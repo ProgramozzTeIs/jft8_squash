@@ -14,6 +14,7 @@ public class AdminController {
     @Autowired
 	public AdminController(AdminService adminService) {
 		super();
+		System.out.println("hello world");
 		this.adminService = adminService;
 	}
 
