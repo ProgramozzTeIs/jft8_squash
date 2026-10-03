@@ -1,17 +1,23 @@
 package pti.sb_squash_mvc.service;
 
+import java.util.Random;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 
 import pti.sb_squash_mvc.dto.RegGameDTO;
 import pti.sb_squash_mvc.dto.SimpleResponseDTO;
 import pti.sb_squash_mvc.model.Game;
+
+import pti.sb_squash_mvc.dto.RegPlaceDTO;
+import pti.sb_squash_mvc.dto.SimpleResponseDTO;
+import pti.sb_squash_mvc.model.Place;
+
 import pti.sb_squash_mvc.model.User;
 import pti.sb_squash_mvc.repository.GameRepository;
 import pti.sb_squash_mvc.repository.PlaceRepository;
 import pti.sb_squash_mvc.repository.UserRepository;
-
-import java.util.Random;
 
 @Service
 public class AdminService {
@@ -37,6 +43,7 @@ public class AdminService {
 
         return new SimpleResponseDTO(adminId + "");
     }
+    
     public SimpleResponseDTO registerGame(Integer adminId, RegGameDTO regGameDTO) {
         gameRepo.save(new Game(
                 null,
@@ -50,4 +57,23 @@ public class AdminService {
 
         return new SimpleResponseDTO(adminId + "");
     }
+
+
+	public SimpleResponseDTO placeRegister(Integer adminId, RegPlaceDTO regPlace) {
+		SimpleResponseDTO simpleResponseDTO = null;
+		
+		Place place = new Place(
+				null,
+				regPlace.getName(),
+				regPlace.getAddress(),
+				regPlace.getRentalFee()
+				);
+		
+		placeRepo.save(place);
+		
+		simpleResponseDTO = new SimpleResponseDTO(adminId + "");
+		
+		return simpleResponseDTO;
+	}
+
 }
