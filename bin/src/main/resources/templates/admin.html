@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin</title>
+</head>
+<body>
+    <h2>Register Player</h2>
+    <form action="/admin/reg/player" method="post">
+        <input type="hidden" name="adminId" th:value="${simpleResponseDTO.getResponse()}">
+        <label>Player Name:
+            <input type="text" name="userName" />
+        </label>
+        <br>
+        <br>
+        <input type="submit" value="Register">
+    </form>
+</body>
+</html>

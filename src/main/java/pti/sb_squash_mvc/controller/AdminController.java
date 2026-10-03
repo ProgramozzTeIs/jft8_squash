@@ -7,6 +7,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import pti.sb_squash_mvc.dto.RegGameDTO;
 import pti.sb_squash_mvc.dto.SimpleResponseDTO;
 import pti.sb_squash_mvc.service.AdminService;
 
@@ -26,5 +28,17 @@ public class AdminController {
 		model.addAttribute("simpleResponseDTO", dto);
 
 		return "admin.html";
+	}
+	@PostMapping("/admin/reg/game")
+	public String registerGame(
+	        Model model,
+	        @RequestParam("adminId") Integer adminId,
+	        RegGameDTO regGameDTO) {
+
+	    SimpleResponseDTO dto = adminService.registerGame(adminId, regGameDTO);
+
+	    model.addAttribute("simpleResponseDTO", dto);
+
+	    return "admin.html";
 	}
 }

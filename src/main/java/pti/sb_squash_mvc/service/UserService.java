@@ -56,6 +56,14 @@ public class UserService {
 			userRepo.save(user);
 		});
 	}
+	public boolean loginFailed(String username, String password) {
+	    for (User user : userRepo.findAll()) {
+	        if (user.getName().equals(username) && user.getPassword().equals(password)) {
+	            return false;
+	        }
+	    }
+	    return true;
+	}
 	
 	private GameDTO convertToDTO(FullGame game) {
 		return new GameDTO(

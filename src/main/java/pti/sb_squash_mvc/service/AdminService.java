@@ -2,7 +2,10 @@ package pti.sb_squash_mvc.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import pti.sb_squash_mvc.dto.RegGameDTO;
 import pti.sb_squash_mvc.dto.SimpleResponseDTO;
+import pti.sb_squash_mvc.model.Game;
 import pti.sb_squash_mvc.model.User;
 import pti.sb_squash_mvc.repository.GameRepository;
 import pti.sb_squash_mvc.repository.PlaceRepository;
@@ -31,6 +34,19 @@ public class AdminService {
                 .toString();
 
         userRepo.save(new User(null, userName, password, "player", false, false));
+
+        return new SimpleResponseDTO(adminId + "");
+    }
+    public SimpleResponseDTO registerGame(Integer adminId, RegGameDTO regGameDTO) {
+        gameRepo.save(new Game(
+                null,
+                regGameDTO.getUser1Id(),
+                regGameDTO.getUser2Id(),
+                regGameDTO.getUser1Score(),
+                regGameDTO.getUser2Score(),
+                regGameDTO.getPlaceId(),
+                regGameDTO.getDate()
+        ));
 
         return new SimpleResponseDTO(adminId + "");
     }

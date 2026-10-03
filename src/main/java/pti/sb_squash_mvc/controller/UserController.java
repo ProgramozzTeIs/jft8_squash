@@ -30,7 +30,9 @@ public class UserController {
             @RequestParam("password") String password,
             Model model
     ) {
-        //TODO: user authentication
+    	if (userService.loginFailed(username, password)) {
+    	    return "login.html";
+    	}
 
         GamePageDTO gamePageDTO = userService.getGamePageDTO(null, null, null); //TODO: Change userId to login user ID
 
