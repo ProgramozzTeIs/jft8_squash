@@ -27,6 +27,33 @@ public class UserService {
 		this.userRepo = userRepo;
 	}
 
+	public SimpleResponseDTO login(String userName, String passsword) {
+		User user = userRepo.getUser(userName);
+
+		if(user == null || (!user.getPassword().equals(passsword))) {
+			return new SimpleResponseDTO(user.getId(), "NOT OK");
+		}
+
+		if(user.getRole().equals("admin")) {
+
+			//TODO - Feri? - add response message, save login in repo
+
+			return new SimpleResponseDTO(user.getId(), "");
+		}
+
+		if(user.getFirstLoginDone() == true) {
+
+			//TODO - Kálmmán? - add response message, save login in repo
+
+			return new SimpleResponseDTO(user.getId(), "");
+		} else {
+			user.setFirstLoginDone(true);
+			userRepo.save(user);
+
+			return new SimpleResponseDTO(user.getId(), "CHANGEPWD");
+		}
+	}
+
 	public GamePageDTO getGamePageDTO(Integer userId, Integer searchedPlayerId, Integer searchedPlaceId) {
 		return new GamePageDTO(
 				userId,

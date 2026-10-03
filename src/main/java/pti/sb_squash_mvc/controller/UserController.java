@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import pti.sb_squash_mvc.dto.GamePageDTO;
+import pti.sb_squash_mvc.dto.SimpleResponseDTO;
+import pti.sb_squash_mvc.dto.UserDTO;
 import pti.sb_squash_mvc.service.UserService;
 
 @Controller
@@ -30,15 +32,34 @@ public class UserController {
             @RequestParam("password") String password,
             Model model
     ) {
-    	if (userService.loginFailed(username, password)) {
-    	    return "login.html";
-    	}
+        SimpleResponseDTO response = userService.login(username, password);
 
-        GamePageDTO gamePageDTO = userService.getGamePageDTO(null, null, null); //TODO: Change userId to login user ID
+        if(response.getResponse().equals("NOT OK")) {
+            if (userService.loginFailed(username, password)) {
+                return "login.html";
+            }
+        } else if(response.getResponse().equals("CHANGEPWD")) {
+            UserDTO dto = new UserDTO(response.getUserId(), username);
 
-        model.addAttribute("gamePageDTO", gamePageDTO);
+            model.addAttribute("userDTO", dto);
 
-        return "games.html";
+            return "changepwd.html";
+        } else if(response.getResponse().equals("")) {
+
+            //TODO - Feri? - add attribute to equals, add dto to model, return required html
+
+        } else if(response.getResponse().equals("")) {
+
+            //TODO - Kálmán? - add attribute to equals
+
+            GamePageDTO gamePageDTO = userService.getGamePageDTO(response.getUserId(), null, null); //TODO: Change userId to login user ID
+
+            model.addAttribute("gamePageDTO", gamePageDTO);
+
+            return "games.html";
+        }
+
+        return "login.html";
     }
 
     @PostMapping("/user/changepwd")

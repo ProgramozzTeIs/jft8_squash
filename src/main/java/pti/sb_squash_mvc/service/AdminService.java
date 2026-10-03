@@ -40,7 +40,7 @@ public class AdminService {
 
         userRepo.save(new User(null, userName, password, "player", false, false));
 
-        return new SimpleResponseDTO(adminId + "");
+        return new SimpleResponseDTO(adminId, "");
     }
     
     public SimpleResponseDTO registerGame(Integer adminId, RegGameDTO regGameDTO) {
@@ -54,7 +54,7 @@ public class AdminService {
                 regGameDTO.getDate()
         ));
 
-        return new SimpleResponseDTO(adminId + "");
+        return new SimpleResponseDTO(adminId, "");
     }
 
 
@@ -70,7 +70,7 @@ public class AdminService {
 		
 		placeRepo.save(place);
 		
-		simpleResponseDTO = new SimpleResponseDTO(adminId + "");
+		simpleResponseDTO = new SimpleResponseDTO(adminId, "");
 		
 		return simpleResponseDTO;
 	}
