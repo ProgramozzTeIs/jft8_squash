@@ -5,12 +5,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-<<<<<<< HEAD
 import pti.sb_squash_mvc.dto.RegGameDTO;
-=======
 import pti.sb_squash_mvc.dto.RegPlaceDTO;
->>>>>>> 8d5176ece046b8427871a9b8bf6e5364ade22200
 import pti.sb_squash_mvc.dto.SimpleResponseDTO;
 import pti.sb_squash_mvc.service.AdminService;
 
@@ -31,19 +27,19 @@ public class AdminController {
 
 		return "admin.html";
 	}
-<<<<<<< HEAD
+
 	@PostMapping("/admin/reg/game")
 	public String registerGame(
 	        Model model,
 	        @RequestParam("adminId") Integer adminId,
 	        RegGameDTO regGameDTO) {
 
-	    SimpleResponseDTO dto = adminService.registerGame(adminId, regGameDTO);
+		SimpleResponseDTO dto = adminService.registerGame(adminId, regGameDTO);
 
-	    model.addAttribute("simpleResponseDTO", dto);
+		model.addAttribute("simpleResponseDTO", dto);
 
-	    return "admin.html";
-=======
+		return "admin.html";
+	}
 	
 	@PostMapping("/admin/reg/place")
 	public String placeRegister(
@@ -57,6 +53,5 @@ public class AdminController {
 		model.addAttribute("simpleResponseDTO", dto);
 		
 		return "admin.html";
->>>>>>> 8d5176ece046b8427871a9b8bf6e5364ade22200
 	}
 }

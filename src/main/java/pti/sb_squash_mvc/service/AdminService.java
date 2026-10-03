@@ -11,7 +11,6 @@ import pti.sb_squash_mvc.dto.SimpleResponseDTO;
 import pti.sb_squash_mvc.model.Game;
 
 import pti.sb_squash_mvc.dto.RegPlaceDTO;
-import pti.sb_squash_mvc.dto.SimpleResponseDTO;
 import pti.sb_squash_mvc.model.Place;
 
 import pti.sb_squash_mvc.model.User;
