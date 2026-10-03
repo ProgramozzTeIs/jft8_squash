@@ -4,15 +4,25 @@ import java.util.List;
 
 public class GamePageDTO {
 	
+	private Integer userId;
 	private List<GameDTO> games;
 	private List<UserDTO> allUser;
 	private List<PlaceDTO> allPlace;
 	
-	public GamePageDTO(List<GameDTO> games, List<UserDTO> allUser, List<PlaceDTO> allPlace) {
+	public GamePageDTO(Integer userId, List<GameDTO> games, List<UserDTO> allUser, List<PlaceDTO> allPlace) {
 		super();
+		this.userId = userId;
 		this.games = games;
 		this.allUser = allUser;
 		this.allPlace = allPlace;
+	}
+	
+	public Integer getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Integer userId) {
+		this.userId = userId;
 	}
 
 	public List<GameDTO> getGames() {
