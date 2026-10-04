@@ -37,8 +37,11 @@ public class UserService {
 		if(user.getRole().equals("admin")) {
 
 			//TODO - Feri? - add response message, save login in repo
+			
+			user.setLoggedIn(true);
+			userRepo.save(user);
 
-			return new SimpleResponseDTO(user.getId(), "");
+			return new SimpleResponseDTO(user.getId(), "OK_ADMIN_LOGGED_IN");
 		}
 
 		if(user.getFirstLoginDone() == true) {

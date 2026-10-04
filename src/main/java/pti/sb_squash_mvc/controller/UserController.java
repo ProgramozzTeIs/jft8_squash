@@ -44,9 +44,13 @@ public class UserController {
             model.addAttribute("userDTO", dto);
 
             return "changepwd.html";
-        } else if(response.getResponse().equals("")) {
+        } else if(response.getResponse().equals("OK_ADMIN_LOGGED_IN")) {
+        	
+        	
+        	model.addAttribute("simpleResponseDTO", response);
+        	
+        	return "admin.html";
 
-            //TODO - Feri? - add attribute to equals, add dto to model, return required html
 
         } else if(response.getResponse().equals("")) {
 
