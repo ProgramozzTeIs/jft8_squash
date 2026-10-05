@@ -14,18 +14,18 @@ import pti.sb_squash_mvc.service.UserService;
 
 @Controller
 public class UserController {
-	private final UserService userService;
-	
-	@Autowired
-    public UserController(UserService userService) {
-		this.userService = userService;
-	}
+    private final UserService userService;
 
-	@GetMapping("/")
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping("/")
     public String index() {
         return "login.html";
     }
-    
+
     @PostMapping("/login")
     public String login(
             @RequestParam("username") String username,
@@ -34,29 +34,28 @@ public class UserController {
     ) {
         SimpleResponseDTO response = userService.login(username, password);
 
-        if(response.getResponse().equals("NOT OK")) {
+        if (response.getResponse().equals("NOT OK")) {
             if (userService.loginFailed(username, password)) {
                 return "login.html";
             }
-        } else if(response.getResponse().equals("CHANGEPWD")) {
+        } else if (response.getResponse().equals("CHANGEPWD")) {
             UserDTO dto = new UserDTO(response.getUserId(), username);
 
             model.addAttribute("userDTO", dto);
 
             return "changepwd.html";
-        } else if(response.getResponse().equals("OK_ADMIN_LOGGED_IN")) {
-        	
-        	
-        	model.addAttribute("simpleResponseDTO", response);
-        	
-        	return "admin.html";
+        } else if (response.getResponse().equals("OK_ADMIN_LOGGED_IN")) {
 
 
-        } else if(response.getResponse().equals("")) {
+            model.addAttribute("simpleResponseDTO", response);
 
-            //TODO - Kálmán? - add attribute to equals
+            return "admin.html";
 
-            GamePageDTO gamePageDTO = userService.getGamePageDTO(response.getUserId(), null, null); //TODO: Change userId to login user ID
+
+        } else if (response.getResponse().equals("OK_USER_LOGGED_IN")) {
+            //TODO - Kálmán? - add attribute to equals       -> DONE
+
+            GamePageDTO gamePageDTO = userService.getGamePageDTO(response.getUserId(), null, null); //TODO: Change userId to login user ID  -> ?? Horvathk
 
             model.addAttribute("gamePageDTO", gamePageDTO);
 

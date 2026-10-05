@@ -41,5 +41,20 @@
         <br>
         <input type="submit" value="Search">
     </form>
+
+    <h2>Search for place</h2>
+    <form action="/user/search/place" method="get">
+        <input type="hidden" name="uid" th:value="${gamePageDTO.getUserId()}">
+        <label>Place:
+            <select name="placeid">
+                <option th:each="place : ${gamePageDTO.getAllPlace()}"
+                        th:text="${place.getName()}"
+                        th:value="${place.getId()}">
+                </option>
+            </select>
+        </label>
+        <br><br>
+        <input type="submit" value="Search">
+    </form>
 </body>
 </html>

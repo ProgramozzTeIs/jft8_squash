@@ -16,108 +16,117 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class UserService {
-	private final GameRepository gameRepo;
-	private final PlaceRepository placeRepo;
-	private final UserRepository userRepo;
-	
-	@Autowired
-	public UserService(GameRepository gameRepo, PlaceRepository placeRepo, UserRepository userRepo) {
-		this.gameRepo = gameRepo;
-		this.placeRepo = placeRepo;
-		this.userRepo = userRepo;
-	}
+    private final GameRepository gameRepo;
+    private final PlaceRepository placeRepo;
+    private final UserRepository userRepo;
 
-	public SimpleResponseDTO login(String userName, String passsword) {
-		User user = userRepo.getUser(userName);
+    @Autowired
+    public UserService(GameRepository gameRepo, PlaceRepository placeRepo, UserRepository userRepo) {
+        this.gameRepo = gameRepo;
+        this.placeRepo = placeRepo;
+        this.userRepo = userRepo;
+    }
 
-		if(user == null || (!user.getPassword().equals(passsword))) {
-			return new SimpleResponseDTO(user.getId(), "NOT OK");
-		}
+    public SimpleResponseDTO login(String userName, String password) {
 
-		if(user.getRole().equals("admin")) {
+        User user = userRepo.getUser(userName);
 
-			//TODO - Feri? - add response message, save login in repo
-			
-			user.setLoggedIn(true);
-			userRepo.save(user);
+        if (user == null || (!user.getPassword().equals(password))) {
+            return new SimpleResponseDTO(user.getId(), "NOT OK");
+        }
 
-			return new SimpleResponseDTO(user.getId(), "OK_ADMIN_LOGGED_IN");
-		}
+        if (user.getRole().equals("admin")) {
 
-		if(user.getFirstLoginDone() == true) {
+            //TODO - Feri? - add response message, save login in repo
+            user.setLoggedIn(true);
+            userRepo.save(user);
 
-			//TODO - Kálmmán? - add response message, save login in repo
+            return new SimpleResponseDTO(user.getId(), "OK_ADMIN_LOGGED_IN");
+        }
 
-			return new SimpleResponseDTO(user.getId(), "");
-		} else {
-			user.setFirstLoginDone(true);
-			userRepo.save(user);
+        if (user.getRole().equals("player")) {
 
-			return new SimpleResponseDTO(user.getId(), "CHANGEPWD");
-		}
-	}
+            if (user.getFirstLoginDone()) {
 
-	public GamePageDTO getGamePageDTO(Integer userId, Integer searchedPlayerId, Integer searchedPlaceId) {
-		return new GamePageDTO(
-				userId,
-				getGameDTOList(searchedPlayerId, searchedPlaceId),
-				StreamSupport.stream(userRepo.findAll().spliterator(), false).map(this::convertToDTO).toList(),
-				StreamSupport.stream(placeRepo.findAll().spliterator(), false).map(this::convertToDTO).toList()
-		);
-	}
+                //TODO - Kálmán? - add response message, save login in repo
+                user.setLoggedIn(true);
+                userRepo.save(user);
 
-	private List<GameDTO> getGameDTOList(Integer searchedPlayerId, Integer searchedPlaceId) {
-		if (searchedPlayerId != null) {
-			return gameRepo.findGamesByPlayer(searchedPlayerId).stream().map(this::convertToDTO).toList();
-		}
+                return new SimpleResponseDTO(user.getId(), "OK_USER_LOGGED_IN");
+            }
 
-		if (searchedPlaceId != null) {
-			//TODO: Kalman, filter by placeId
-		}
+            user.setFirstLoginDone(false);
+            userRepo.save(user);
 
-		return gameRepo.findAllGames().stream().map(this::convertToDTO).toList();
-	}
+            return new SimpleResponseDTO(user.getId(), "CHANGEPWD");
+        }
 
-	public void changePassword(Integer userId, String password) {
-		userRepo.findById(userId).ifPresent(user -> {
-			user.setPassword(password);
-			user.setLoggedIn(true);
-			user.setFirstLoginDone(true);
-			userRepo.save(user);
-		});
-	}
-	public boolean loginFailed(String username, String password) {
-	    for (User user : userRepo.findAll()) {
-	        if (user.getName().equals(username) && user.getPassword().equals(password)) {
-	            return false;
-	        }
-	    }
-	    return true;
-	}
-	
-	private GameDTO convertToDTO(FullGame game) {
-		return new GameDTO(
-				new UserDTO(game.getUser1Id(), game.getUser1Name()),
-				new UserDTO(game.getUser2Id(), game.getUser2Name()),
-				new GameResultDTO(game.getUser1Score(), game.getUser2Score()),
-				new PlaceDTO(game.getPlaceId(), game.getPlaceName(), game.getAddress(), game.getRentFee()),
-				game.getGameDate()
-		);
-	}
+        return new SimpleResponseDTO(user.getId(), "NOT OK");
+    }
 
-	private UserDTO convertToDTO(User user) {
-		return new UserDTO(
-				user.getId(),
-				user.getName()
-		);
-	}
+    public GamePageDTO getGamePageDTO(Integer userId, Integer searchedPlayerId, Integer searchedPlaceId) {
+        return new GamePageDTO(
+                userId,
+                getGameDTOList(searchedPlayerId, searchedPlaceId),
+                StreamSupport.stream(userRepo.findAll().spliterator(), false).map(this::convertToDTO).toList(),
+                StreamSupport.stream(placeRepo.findAll().spliterator(), false).map(this::convertToDTO).toList()
+        );
+    }
 
-	private PlaceDTO convertToDTO(Place place) {
-		return new PlaceDTO(
-				place.getId(),
-				place.getName(),
-				place.getAddress(),
-				place.getRentFee()
-		);
-	}
+    private List<GameDTO> getGameDTOList(Integer searchedPlayerId, Integer searchedPlaceId) {
+        if (searchedPlayerId != null) {
+            return gameRepo.findGamesByPlayer(searchedPlayerId).stream().map(this::convertToDTO).toList();
+        }
+
+        if (searchedPlaceId != null) {
+            //TODO: Kalman, filter by placeId
+            return gameRepo.findGamesByPlaceId(searchedPlaceId).stream().map(this::convertToDTO).toList();
+        }
+
+        return gameRepo.findAllGames().stream().map(this::convertToDTO).toList();
+    }
+
+    public void changePassword(Integer userId, String password) {
+        userRepo.findById(userId).ifPresent(user -> {
+            user.setPassword(password);
+            user.setLoggedIn(true);
+            user.setFirstLoginDone(true);
+            userRepo.save(user);
+        });
+    }
+
+    public boolean loginFailed(String username, String password) {
+        for (User user : userRepo.findAll()) {
+            if (user.getName().equals(username) && user.getPassword().equals(password)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private GameDTO convertToDTO(FullGame game) {
+        return new GameDTO(
+                new UserDTO(game.getUser1Id(), game.getUser1Name()),
+                new UserDTO(game.getUser2Id(), game.getUser2Name()),
+                new GameResultDTO(game.getUser1Score(), game.getUser2Score()),
+                new PlaceDTO(game.getPlaceId(), game.getPlaceName(), game.getAddress(), game.getRentFee()),
+                game.getGameDate()
+        );
+    }
+
+    private UserDTO convertToDTO(User user) {
+        return new UserDTO(
+                user.getId(),
+                user.getName()
+        );
+    }
+
+    private PlaceDTO convertToDTO(Place place) {
+        return new PlaceDTO(
+                place.getId(),
+                place.getName(),
+                place.getAddress(),
+                place.getRentFee()
+        );
+    }
 }
