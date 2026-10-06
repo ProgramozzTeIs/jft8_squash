@@ -4,14 +4,13 @@ public class PlaceDTO {
     private Integer id;
     private String name;
     private String address;
-    private int rentalFee;	// FT
-    private int rentalFeeEUR;
+    private int rentalFee;
 
     public PlaceDTO(Integer id, String name, String address, int rentalFee) {
         this.id = id;
         this.name = name;
         this.address = address;
-        this.rentalFee = rentalFee;	
+        this.rentalFee = rentalFee;
     }
 
     public Integer getId() {
