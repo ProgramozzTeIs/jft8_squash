@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import pti.sb_squash_mvc.config.UserLoginStatuses;
 import pti.sb_squash_mvc.dto.GamePageDTO;
 import pti.sb_squash_mvc.dto.SimpleResponseDTO;
 import pti.sb_squash_mvc.dto.UserDTO;
@@ -34,17 +35,17 @@ public class UserController {
     ) {
         SimpleResponseDTO response = userService.login(username, password);
 
-        if (response.getResponse().equals("NOT OK")) {
-            if (userService.loginFailed(username, password)) {
+        if (response.getResponse().equals(UserLoginStatuses.NOT_OK.toString())) {
+//            if (userService.loginFailed(username, password)) {
                 return "login.html";
-            }
-        } else if (response.getResponse().equals("CHANGEPWD")) {
+//            }
+        } else if (response.getResponse().equals(UserLoginStatuses.CHANGEPWD.toString())) {
             UserDTO dto = new UserDTO(response.getUserId(), username);
 
             model.addAttribute("userDTO", dto);
 
             return "changepwd.html";
-        } else if (response.getResponse().equals("OK_ADMIN_LOGGED_IN")) {
+        } else if (response.getResponse().equals(UserLoginStatuses.OK_ADMIN_LOGGED_IN.toString())) {
 
 
             model.addAttribute("simpleResponseDTO", response);
@@ -52,10 +53,9 @@ public class UserController {
             return "admin.html";
 
 
-        } else if (response.getResponse().equals("OK_USER_LOGGED_IN")) {
-            //TODO - Kálmán? - add attribute to equals       -> DONE
-
-            GamePageDTO gamePageDTO = userService.getGamePageDTO(response.getUserId(), null, null); //TODO: Change userId to login user ID  -> ?? Horvathk
+        } else if (response.getResponse().equals(UserLoginStatuses.OK_USER_LOGGED_IN.toString())) {
+            
+        	GamePageDTO gamePageDTO = userService.getGamePageDTO(response.getUserId(), null, null);
 
             model.addAttribute("gamePageDTO", gamePageDTO);
 
@@ -67,7 +67,9 @@ public class UserController {
 
     @PostMapping("/user/changepwd")
     public String changePassword(Model model, @RequestParam("uId") Integer userId, @RequestParam("newPwd") String password) {
-        userService.changePassword(userId, password);
+    	//TODO: user authentication
+    	
+    	userService.changePassword(userId, password);
 
         GamePageDTO gamePageDTO = userService.getGamePageDTO(userId, null, null);
 

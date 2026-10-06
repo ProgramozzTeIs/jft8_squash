@@ -33,10 +33,16 @@ public class AdminService {
 
     public SimpleResponseDTO registerPlayer(Integer adminId, String userName) {
         String password = new Random().ints(48, 123)
-                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))	//ASCII codes
                 .limit(20)
                 .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                 .toString();
+//    	String allChar = "abcdefghjklgweghtoiuz_123456789.-?";
+//    	String password = "";
+//    	for(int i = 0; i < 20; i++) {
+//    		int randomIndex = new Random().nextInt(allChar.length());
+//    		password += allChar.charAt(randomIndex);
+//    	}
 
         userRepo.save(new User(null, userName, password, "player", false, false));
 

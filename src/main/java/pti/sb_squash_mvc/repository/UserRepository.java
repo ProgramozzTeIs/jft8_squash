@@ -7,6 +7,6 @@ import pti.sb_squash_mvc.model.User;
 
 public interface UserRepository extends CrudRepository<User, Integer> {
 
-    @Query("SELECT * FROM user WHERE name = :userName")
-    User getUser(@Param("userName") String userName);
+    @Query("SELECT * FROM user WHERE name = :userName AND password = :pwd")
+    User getUserByUserNameAndPassword(@Param("userName") String userName, @Param("pwd") String pwd);
 }

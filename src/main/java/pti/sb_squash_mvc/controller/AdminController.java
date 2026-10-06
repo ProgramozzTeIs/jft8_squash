@@ -21,6 +21,8 @@ public class AdminController {
 
 	@PostMapping("/admin/reg/player")
 	public String registerPlayer(Model model, @RequestParam("adminId") Integer adminId, @RequestParam("userName") String userName) {
+		// TODO: Admin authentication
+		
 		SimpleResponseDTO dto = adminService.registerPlayer(adminId, userName);
 
 		model.addAttribute("simpleResponseDTO", dto);
@@ -33,7 +35,8 @@ public class AdminController {
 	        Model model,
 	        @RequestParam("adminId") Integer adminId,
 	        RegGameDTO regGameDTO) {
-
+		// TODO: Admin authentication
+		
 		SimpleResponseDTO dto = adminService.registerGame(adminId, regGameDTO);
 
 		model.addAttribute("simpleResponseDTO", dto);
@@ -47,6 +50,7 @@ public class AdminController {
 			@RequestParam("adminId") Integer adminId,
 			RegPlaceDTO regPlace
 			) {
+		// TODO: Admin authentication
 		
 		SimpleResponseDTO dto = adminService.placeRegister(adminId, regPlace);
 		
