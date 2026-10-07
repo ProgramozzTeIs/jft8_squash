@@ -33,6 +33,46 @@
     		<input type="submit" value="Add new place"/>
     	</form>
     	
-<!--    	TODO: Game Regisztráció Form -->
+		<h2>Register Game</h2>
+		<form action="/admin/reg/game" method="post">
+
+		    <input type="hidden" name="adminId" th:value="${simpleResponseDTO.getUserId()}">
+
+		    <label>Player 1 ID:
+		        <input type="number" name="user1Id"/>
+		    </label>
+
+		    <label>Player 1 Score:
+		        <input type="number" name="user1Score"/>
+		    </label>
+
+		    <br>
+		    <br>
+
+		    <label>Player 2 ID:
+		        <input type="number" name="user2Id"/>
+		    </label>
+
+		    <label>Player 2 Score:
+		        <input type="number" name="user2Score"/>
+		    </label>
+
+		    <br>
+		    <br>
+
+		    <label>Place ID:
+		        <input type="number" name="placeId"/>
+		    </label>
+
+		    <label>Date:
+		        <input type="date" name="date"/>
+		    </label>
+
+		    <br>
+		    <br>
+
+		    <input type="submit" value="Register Game"/>
+
+		</form>
 </body>
 </html>
