@@ -5,12 +5,14 @@ public class PlaceDTO {
     private String name;
     private String address;
     private int rentalFee;
+    private Double rentalFeeEUR;
 
-    public PlaceDTO(Integer id, String name, String address, int rentalFee) {
+    public PlaceDTO(Integer id, String name, String address, int rentalFee, Double rentalFeeEUR) {
         this.id = id;
         this.name = name;
         this.address = address;
         this.rentalFee = rentalFee;
+        this.rentalFeeEUR = rentalFeeEUR;
     }
 
     public Integer getId() {
@@ -44,4 +46,14 @@ public class PlaceDTO {
     public void setRentalFee(int rentalFee) {
         this.rentalFee = rentalFee;
     }
+
+	public Double getRentalFeeEUR() {
+		return rentalFeeEUR;
+	}
+
+	public void setRentalFeeEUR(Double rentalFeeEUR) {
+		this.rentalFeeEUR = rentalFeeEUR;
+	}
+    
+    
 }

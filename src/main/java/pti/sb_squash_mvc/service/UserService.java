@@ -1,10 +1,20 @@
 package pti.sb_squash_mvc.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
 
 import pti.sb_squash_mvc.config.UserLoginStatuses;
-import pti.sb_squash_mvc.dto.*;
+import pti.sb_squash_mvc.dto.ExchangeRateDTO;
+import pti.sb_squash_mvc.dto.GameDTO;
+import pti.sb_squash_mvc.dto.GamePageDTO;
+import pti.sb_squash_mvc.dto.GameResultDTO;
+import pti.sb_squash_mvc.dto.PlaceDTO;
+import pti.sb_squash_mvc.dto.SimpleResponseDTO;
+import pti.sb_squash_mvc.dto.UserDTO;
 import pti.sb_squash_mvc.model.FullGame;
 import pti.sb_squash_mvc.model.Place;
 import pti.sb_squash_mvc.model.User;
@@ -12,14 +22,12 @@ import pti.sb_squash_mvc.repository.GameRepository;
 import pti.sb_squash_mvc.repository.PlaceRepository;
 import pti.sb_squash_mvc.repository.UserRepository;
 
-import java.util.List;
-import java.util.stream.StreamSupport;
-
 @Service
 public class UserService {
     private final GameRepository gameRepo;
     private final PlaceRepository placeRepo;
     private final UserRepository userRepo;
+   
 
     @Autowired
     public UserService(GameRepository gameRepo, PlaceRepository placeRepo, UserRepository userRepo) {
@@ -54,8 +62,7 @@ public class UserService {
                 return new SimpleResponseDTO(user.getId(), UserLoginStatuses.OK_USER_LOGGED_IN.toString());
             }
 
-//            user.setFirstLoginDone(false);
-//            userRepo.save(user);
+
 
             return new SimpleResponseDTO(user.getId(), UserLoginStatuses.CHANGEPWD.toString());
         }
@@ -64,24 +71,45 @@ public class UserService {
     }
 
     public GamePageDTO getGamePageDTO(Integer userId, Integer searchedPlayerId, Integer searchedPlaceId) {
+    	
+		ExchangeRateDTO eRDTO = null;
+
+		RestClient restClient = RestClient.create();
+		eRDTO = restClient.get().uri("http://localhost:8081/exchange-rate").retrieve().body(ExchangeRateDTO.class);
+		
+
+		List<UserDTO> userDTOList = new ArrayList<>();
+		for(User user : userRepo.findAll()) {
+			UserDTO userDTO = this.convertUserToDTO(user);
+			userDTOList.add(userDTO);
+		}
+		
+		List<PlaceDTO> placeDTOList = new ArrayList<>();
+		for(Place place : placeRepo.findAll()) {
+			PlaceDTO placeDTO = this.convertPlaceToDTO(place, eRDTO.getRate());
+			placeDTOList.add(placeDTO);
+		}
+		
+		
         return new GamePageDTO(
                 userId,
-                getGameDTOList(searchedPlayerId, searchedPlaceId),
-                StreamSupport.stream(userRepo.findAll().spliterator(), false).map(this::convertUserToDTO).toList(),
-                StreamSupport.stream(placeRepo.findAll().spliterator(), false).map(this::convertPlaceToDTO).toList()
+                getGameDTOList(searchedPlayerId, searchedPlaceId, eRDTO.getRate()),
+                userDTOList, placeDTOList
+//                StreamSupport.stream(userRepo.findAll().spliterator(), false).map(this::convertUserToDTO).toList(),
+//                StreamSupport.stream(placeRepo.findAll().spliterator(), false).map(place -> this.convertPlaceToDTO(place, eRDTO.getRate())).toList()
         );
     }
 
-    private List<GameDTO> getGameDTOList(Integer searchedPlayerId, Integer searchedPlaceId) {
+    private List<GameDTO> getGameDTOList(Integer searchedPlayerId, Integer searchedPlaceId, Double eur) {
         if (searchedPlayerId != null) {
-            return gameRepo.findGamesByPlayer(searchedPlayerId).stream().map(this::convertFullGameToDTO).toList();
+            return gameRepo.findGamesByPlayer(searchedPlayerId).stream().map(game -> this.convertFullGameToDTO(game, eur)).toList();
         }
 
         if (searchedPlaceId != null) {
-            return gameRepo.findGamesByPlaceId(searchedPlaceId).stream().map(this::convertFullGameToDTO).toList();
+            return gameRepo.findGamesByPlaceId(searchedPlaceId).stream().map(game -> this.convertFullGameToDTO(game, eur)).toList();
         }
 
-        return gameRepo.findAllGames().stream().map(this::convertFullGameToDTO).toList();
+        return gameRepo.findAllGames().stream().map(game -> this.convertFullGameToDTO(game, eur)).toList();
     }
 
     public void changePassword(Integer userId, String password) {
@@ -95,21 +123,16 @@ public class UserService {
         });
     }
 
-//    public boolean loginFailed(String username, String password) {
-//        for (User user : userRepo.findAll()) {
-//            if (user.getName().equals(username) && user.getPassword().equals(password)) {
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
 
-    private GameDTO convertFullGameToDTO(FullGame game) {
-        return new GameDTO(
+
+    private GameDTO convertFullGameToDTO(FullGame game, Double eur) {
+
+		  return new GameDTO(
                 new UserDTO(game.getUser1Id(), game.getUser1Name()),
                 new UserDTO(game.getUser2Id(), game.getUser2Name()),
                 new GameResultDTO(game.getUser1Score(), game.getUser2Score()),
-                new PlaceDTO(game.getPlaceId(), game.getPlaceName(), game.getAddress(), game.getRentFee()),
+                new PlaceDTO(game.getPlaceId(), game.getPlaceName(), game.getAddress(), game.getRentFee(), game.getRentFee() / eur
+                		),
                 game.getGameDate()
         );
     }
@@ -121,12 +144,13 @@ public class UserService {
         );
     }
 
-    private PlaceDTO convertPlaceToDTO(Place place) {
+    private PlaceDTO convertPlaceToDTO(Place place, Double eur) {
         return new PlaceDTO(
                 place.getId(),
                 place.getName(),
                 place.getAddress(),
-                place.getRentFee()
+                place.getRentFee(),
+                place.getRentFee() / eur
         );
     }
 }
